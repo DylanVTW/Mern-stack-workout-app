@@ -1,12 +1,14 @@
 import { useState } from "react";
 
-function UpdateWorkout({ workoutId, currentTitle, currentReps, currentLoad, onUpdated }) {
+function UpdateWorkout({ workoutId, currentTitle, currentReps, currentLoad, token, onUpdated }) {
   const [title, setTitle] = useState(currentTitle);
   const [reps, setReps] = useState(currentReps);
   const [load, setLoad] = useState(currentLoad);
+  const [error, setError] = useState(null);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setError(null);
 
     const updatedWorkout = {
       title,
@@ -21,6 +23,7 @@ function UpdateWorkout({ workoutId, currentTitle, currentReps, currentLoad, onUp
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
           body: JSON.stringify(updatedWorkout),
         },
@@ -32,10 +35,10 @@ function UpdateWorkout({ workoutId, currentTitle, currentReps, currentLoad, onUp
         console.log("Workout bijgewerkt:", data);
         onUpdated?.(data);
       } else {
-        console.error("Error:", data.error);
+        setError(data.error || "Error bij het bijwerken");
       }
     } catch (error) {
-      console.error("Error:", error);
+      setError("Server error: " + error.message);
     }
   };
 
@@ -60,6 +63,7 @@ function UpdateWorkout({ workoutId, currentTitle, currentReps, currentLoad, onUp
         onChange={(e) => setLoad(e.target.value)}
       />
       <button type="submit">Update Workout</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </form>
   );
 }
