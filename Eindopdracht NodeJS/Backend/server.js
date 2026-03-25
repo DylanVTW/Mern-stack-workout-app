@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 
-app.use("/api/service", serviceRoutes);
+app.use("/api/services", serviceRoutes);
 app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {

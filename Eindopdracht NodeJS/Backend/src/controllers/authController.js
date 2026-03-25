@@ -6,14 +6,14 @@ const createToken = (id) => {
 };
 
 export const register = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
-    const exists = await User.findOne({ email });
+    const exists = await User.findOne({ username });
     if (exists) {
       return res.status(400).json({ error: "Username already in use" });
     }
-    if (!email || !password) {
+    if (!username || !email || !password) {
       return;
     }
     if (password.length < 6) {
@@ -22,21 +22,21 @@ export const register = async (req, res) => {
         .json({ error: "Password must be at least 6 characters long" });
     }
 
-    const user = await User.create({ email, password });
+    const user = await User.create({ username, email, password });
 
     const token = createToken(user._id);
 
-    res.status(201).json({ email: user.email, token });
+    res.status(201).json({ username: user.username, email: user.email, token });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
-    if (!email || !password) {
+    if (!username || !email || !password) {
       return res.status(400).json({ error: "All fields must be filled" });
     }
     const user = await User.findOne({ email });
@@ -49,7 +49,7 @@ export const login = async (req, res) => {
       return res.status(400).json({ error: "Incorrect password" });
     }
     const token = createToken(user._id);
-    res.status(200).json({ email: user.email, token });
+    res.status(200).json({ username: user.username, email: user.email, token });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
