@@ -4,10 +4,11 @@ const Schema = mongoose.Schema;
 
 const serviceSchema = new Schema(
   {
-    serviceName: {
+    Name: {
       type: String,
       required: true,
       unique: false,
+      enum: ['knip', 'fade', 'beard trim'],
       maxLength: 50,
     },
     Date: {
@@ -17,6 +18,19 @@ const serviceSchema = new Schema(
     Time: {
       type: String,
       required: true,
+    },
+    Price: {
+        type: Number,
+        required: true,
+    },
+    Description: {
+        type: String,
+        required: true,
+    },
+    Status: {
+        type: String,
+        enum: ['Gepland', 'Geannuleerd'],
+        default: 'Gepland',
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
