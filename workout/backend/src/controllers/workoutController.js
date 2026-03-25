@@ -1,4 +1,4 @@
-  import Workout from "../models/workout.js";
+  import Workout from "../models/Workout.js";
   import mongoose from "mongoose";
 
   export const getAllWorkouts = async (req, res) => {
@@ -47,6 +47,7 @@
     }
   };
 
+    
   export const updateWorkout = async (req, res) => {
     const { id } = req.params;
 
