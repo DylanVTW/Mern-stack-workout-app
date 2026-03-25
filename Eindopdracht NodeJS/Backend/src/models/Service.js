@@ -1,26 +1,32 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const Schema = new mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const ServiceSchema = new Schema({
+const serviceSchema = new Schema(
+  {
     serviceName: {
-        type: String,
-        required: true,
-        unique: false,
-        maxLength: 50
+      type: String,
+      required: true,
+      unique: false,
+      maxLength: 50,
     },
     Date: {
-        type: Date,
-        required: true
+      type: Date,
+      required: true,
     },
     Time: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User'
-    }
-}, {timestamps: true
-});
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+  },
+  { timestamps: true },
+);
+
+const Service = mongoose.model('Service', serviceSchema);
+
+export default Service;
