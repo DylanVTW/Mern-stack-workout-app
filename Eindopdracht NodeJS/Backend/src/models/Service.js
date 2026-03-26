@@ -8,7 +8,7 @@ const serviceSchema = new Schema(
       type: String,
       required: true,
       unique: false,
-      enum: ['knip', 'fade', 'beard trim'],
+      enum: ['knip', 'fade', 'baard'],
       maxLength: 50,
     },
     Date: {

@@ -1,7 +1,7 @@
 import Service from "../models/Service.js";
 import mongoose from "mongoose";
 
-const allowedServices = ["knip", "fade", "beard trim"];
+const allowedServices = ["knip", "fade", "baard"];
 
 const serviceData = {
   knip: {
@@ -51,12 +51,17 @@ export const getServiceById = async (req, res) => {
 export const createService = async (req, res) => {
   const { Name, Date, Time } = req.body;
 
+
+  const cleanName = Name.trim().toLowerCase();
   if (!allowedServices.includes(Name)) {
-    return res
-      .status(400)
-      .json({ error: "Invalid choice. Choose: knip, fade or beard trim" });
+    return res.status(400).json({ error: "Invalid choice. Choose: knip, fade or baard" });
   }
 
+
+  const serviceInfo = serviceData[cleanName];
+  if(!serviceInfo) {
+    return res.status(500).json({error: "Service data not found "});
+  }
   const { Price, Description } = serviceData[Name];
 
   try {
@@ -85,7 +90,7 @@ export const updateService = async (req, res) => {
   try {
     if (req.body.Name && !allowedServices.includes(req.body.Name)) {
       return res.status(400).json({
-        error: "Invalid service. Choose: knip, fade or beard trim",
+        error: "Invalid service. Choose: knip, fade or baard",
       });
     }
     const allowedStatus = ['Gepland', 'Geannuleerd'];
