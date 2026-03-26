@@ -1,11 +1,13 @@
 import { useState } from "react";
 
 function ServiceForm({ token, onServiceCreated }) {
+  // Form state for service type, date, and time
   const [Name, setName] = useState("knip");
   const [Date, setDate] = useState("");
   const [Time, setTime] = useState("");
   const [error, setError] = useState(null);
 
+  // Submit handler calls backend API and resets fields on success
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);

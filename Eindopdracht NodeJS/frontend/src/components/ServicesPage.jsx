@@ -1,76 +1,37 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ServiceForm from "./ServiceForm";
 
 function ServicesPage() {
-  const [services, setServices] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // 🔹 Fetch all appointments (ONLY YOURS)
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/service", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  // 🔹 Available services
+  const availableServices = [
+    {
+      id: "knip",
+      name: "Knip",
+      price: 25,
+      description: "Standaard haarknip",
+    },
+    {
+      id: "fade",
+      name: "Fade",
+      price: 30,
+      description: "Fade haircut",
+    },
+    {
+      id: "baard",
+      name: "Baard",
+      price: 15,
+      description: "Baard Trimmen",
+    },
+  ];
 
-        const data = await res.json();
-        setServices(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    if (token) fetchServices();
-  }, [token]);
-
-
-  // 🔹 Cancel appointment
-  const handleCancel = async (id) => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/service/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ Status: "Geannuleerd" }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setServices((prev) => prev.map((s) => (s._id === id ? data : s)));
-      } else {
-        alert(data.error);
-      }
-    } catch (err) {
-      console.error(err);
-    }
+  // Navigate to page showing this user’s appointments
+  const handleViewMyServices = () => {
+    navigate("/my-services");
   };
 
-  // 🔹 Delete appointment (optional)
-  const handleDelete = async (id) => {
-    try {
-      await fetch(`http://localhost:5000/api/service/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setServices((prev) => prev.filter((s) => s._id !== id));
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // 🔹 Logout
+  // Logout and redirect to login
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -78,47 +39,21 @@ function ServicesPage() {
 
   return (
     <div className="App">
-      <h1>Afspraken</h1>
+      <h1>Beschikbare Diensten</h1>
 
       <button onClick={handleLogout}>Logout</button>
+      <button onClick={handleViewMyServices}>Mijn Afspraken</button>
 
-      <button onClick={() => setShowForm(!showForm)}>Maak afspraak</button>
-
-      {showForm && (
-        <ServiceForm
-          token={token}
-          onServiceCreated={(newService) => {
-            setServices((prev) => [...prev, newService]);
-            setShowForm(false); // closes form after submit
-          }}
-        />
-      )}
-
-      {/* 🔹 LIST */}
-      {services.length === 0 ? (
-        <p>Geen afspraken gevonden</p>
-      ) : (
-        services.map((service) => (
-          <div key={service._id}>
-            <h3>{service.Name}</h3>
-            <p>Datum: {service.Date}</p>
-            <p>Tijd: {service.Time}</p>
-            <p>Status: {service.Status}</p>
-            <p>Prijs: €{service.Price}</p>
-            <p>Descriptie: {service.Description}</p>
-
-            {/* 🔹 CANCEL BUTTON */}
-            {service.Status !== "Geannuleerd" && (
-              <button onClick={() => handleCancel(service._id)}>
-                Annuleer
-              </button>
-            )}
-
-            {/* 🔹 DELETE (optional) */}
-            <button onClick={() => handleDelete(service._id)}>Verwijder</button>
+      {/* 🔹 LIST OF AVAILABLE SERVICES */}
+      <div className="services-list">
+        {availableServices.map((service) => (
+          <div key={service.id} className="service-card">
+            <h3>{service.name}</h3>
+            <p><strong>Beschrijving:</strong> {service.description}</p>
+            <p><strong>Prijs:</strong> €{service.price}</p>
           </div>
-        ))
-      )}
+        ))}
+      </div>
     </div>
   );
 }

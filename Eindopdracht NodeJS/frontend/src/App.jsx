@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Register from "./components/Register";
 import Login from "./components/Login";
 import ServicesPage from "./components/ServicesPage";
+import MyServices from "./components/MyServices";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
@@ -12,12 +13,21 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Protected route */}
+        {/* Protected routes */}
         <Route
           path="/services"
           element={
             <PrivateRoute>
               <ServicesPage />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/my-services"
+          element={
+            <PrivateRoute>
+              <MyServices />
             </PrivateRoute>
           }
         />
