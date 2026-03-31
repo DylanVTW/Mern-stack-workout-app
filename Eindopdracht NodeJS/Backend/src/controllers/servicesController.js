@@ -1,5 +1,7 @@
 import Service from "../models/Service.js";
+import User from "../models/User.js";
 import mongoose from "mongoose";
+import { sendBookingConfirmation } from "../utils/sendMail.js";
 
 const allowedServices = ["knip", "fade", "baard"];
 
@@ -74,6 +76,25 @@ export const createService = async (req, res) => {
       Status: 'Gepland',
       userId: req.user._id,
     });
+
+    // Stuur bevestigingsmail (niet-kritiek, dus geen error handling nodig)
+    try {
+      const user = await User.findById(req.user._id);
+      if (user && user.email) {
+        await sendBookingConfirmation(
+          user.email,
+          user.username,
+          Name,
+          Date,
+          Time,
+          Price
+        );
+      }
+    } catch (emailError) {
+      // Log de error maar gooi door, de boeking staat al in de database
+      console.error("Email sending error:", emailError.message);
+    }
+
     res.status(201).json(service);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
