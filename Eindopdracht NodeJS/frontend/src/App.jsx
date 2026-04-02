@@ -4,6 +4,8 @@ import Login from "./components/Login";
 import ServicesPage from "./components/ServicesPage";
 import MyServices from "./components/MyServices";
 import PrivateRoute from "./components/PrivateRoute";
+import AdminDashboard from "./components/AdminDashboard";
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
   return (
@@ -31,6 +33,15 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        <Route
+         path="/admin"
+         element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+         }
+         />
 
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />

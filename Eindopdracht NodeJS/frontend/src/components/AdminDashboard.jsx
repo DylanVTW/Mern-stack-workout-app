@@ -1,0 +1,144 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+function AdminDashboard() {
+    const [services, setServices] = useState([]);
+    const [ loading, setLoading ] = useState(true);
+    const [error, setError ] = useState(null);
+    const navigate = useNavigate();
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+
+    useEffect(() => {
+        if (role !== 'admin') {
+            navigate('/services');
+        }
+
+    }, [role, navigate]);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/api/admin/services", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (response.status === 401) {
+                    setError("Je hebt geen adminrechten om deze pagina te bekijken.");
+                    navigate('/services');
+                    return;
+                }
+
+                if(!response.ok) {
+                    throw new Error("Er is een fout opgetreden");
+                }
+
+                const data = await response.json();
+                setServices(data);
+                setLoading(false);
+            } catch (error) {
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+        if (token && role === 'admin') {
+            fetchServices();
+        }
+    }, [token, role, navigate]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('email');
+        localStorage.removeItem('role');
+        navigate('/login');
+    };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error:{error}</div>;
+    }
+
+    return (
+       <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+        <h1>Admin Dashboard</h1>
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#dc3545",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Uitloggen
+        </button>
+      </div>
+
+      {services.length === 0 ? (
+        <p>Geen services gevonden</p>
+      ) : (
+        <div style={{ overflowX: "auto" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              border: "1px solid #ddd",
+            }}
+          >
+            <thead>
+              <tr style={{ backgroundColor: "#f8f9fa", borderBottom: "2px solid #ddd" }}>
+                <th style={{ padding: "12px", textAlign: "left", borderRight: "1px solid #ddd" }}>Service</th>
+                <th style={{ padding: "12px", textAlign: "left", borderRight: "1px solid #ddd" }}>Beschrijving</th>
+                <th style={{ padding: "12px", textAlign: "left", borderRight: "1px solid #ddd" }}>Prijs</th>
+                <th style={{ padding: "12px", textAlign: "left", borderRight: "1px solid #ddd" }}>Datum</th>
+                <th style={{ padding: "12px", textAlign: "left", borderRight: "1px solid #ddd" }}>Tijd</th>
+                <th style={{ padding: "12px", textAlign: "left", borderRight: "1px solid #ddd" }}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {services.map((service) => (
+                <tr key={service._id} style={{ borderBottom: "1px solid #ddd" }}>
+                  <td style={{ padding: "12px", borderRight: "1px solid #ddd" }}>
+                    {service.Name}
+                  </td>
+                  <td style={{ padding: "12px", borderRight: "1px solid #ddd" }}>
+                    {service.Description}
+                  </td>
+                  <td style={{ padding: "12px", borderRight: "1px solid #ddd" }}>
+                    €{service.Price}
+                  </td>
+                  <td style={{ padding: "12px", borderRight: "1px solid #ddd" }}>
+                    {new Date(service.Date).toLocaleDateString("nl-NL")}
+                  </td>
+                  <td style={{ padding: "12px", borderRight: "1px solid #ddd" }}>
+                    {service.Time}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px",
+                      color: service.Status === "Gepland" ? "#28a745" : "#dc3545",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {service.Status}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+    );
+
+}
+
+export default AdminDashboard;

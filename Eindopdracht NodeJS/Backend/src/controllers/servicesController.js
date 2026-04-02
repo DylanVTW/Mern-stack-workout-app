@@ -55,20 +55,16 @@ export const createService = async (req, res) => {
 
 
   const cleanName = Name.trim().toLowerCase();
-  if (!allowedServices.includes(Name)) {
-    return res.status(400).json({ error: "Invalid choice. Choose: knip, fade or baard" });
-  }
-
-
+  
   const serviceInfo = serviceData[cleanName];
   if(!serviceInfo) {
     return res.status(500).json({error: "Service data not found "});
   }
-  const { Price, Description } = serviceData[Name];
+  const { Price, Description } = serviceData[cleanName];
 
   try {
     const service = await Service.create({
-      Name,
+      Name: cleanName,
       Date,
       Time,
       Price,
@@ -105,30 +101,17 @@ export const updateService = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.isValidObjectId(id)) {
-    return res.status(400).json({ error: "Invalid service ID" });
+    return res.status(400).json({ errors: { id: "Ongeldig service ID" } });
   }
 
   try {
-    if (req.body.Name && !allowedServices.includes(req.body.Name)) {
-      return res.status(400).json({
-        error: "Invalid service. Choose: knip, fade or baard",
-      });
-    }
-    const allowedStatus = ['Gepland', 'Geannuleerd'];
-
-    if (req.body.Status && !allowedStatus.includes(req.body.Status)) {
-        return res.status(400).json({
-            error: 'Invalid status, Choose: Gepland or Geannuleerd '
-        });
-    }
-
     const service = await Service.findOneAndUpdate(
       { _id: id, userId: req.user._id },
       { ...req.body },
       { new: true },
     );
     if (!service) {
-      return res.status(404).json({ error: "Invalid service ID" });
+      return res.status(404).json({ errors: { id: "Service niet gevonden" } });
     }
     res.status(200).json(service);
   } catch (error) {

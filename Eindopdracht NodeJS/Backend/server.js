@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import serviceRoutes from "./src/routes/serviceRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
+import adminRoutes from  "./src/routes/adminRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use("/api/service", serviceRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
     res.send("Backend is running");

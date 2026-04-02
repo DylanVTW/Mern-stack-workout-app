@@ -48,6 +48,7 @@ function Register() {
       // Save token to localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("email", data.email);
+      localStorage.setItem("role", data.role);
 
       // Redirect to services page
       navigate("/services");

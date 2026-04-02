@@ -40,9 +40,15 @@ function Login() {
       // Save token to localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("email", data.email);
+      localStorage.setItem("role", data.role);
 
       // Redirect to services page
       navigate("/services");
+      if (data.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/services");
+      }
     } catch (error) {
       setError("Server error: " + error.message);
       setLoading(false);
