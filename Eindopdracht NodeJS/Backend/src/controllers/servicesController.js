@@ -3,8 +3,6 @@ import User from "../models/User.js";
 import mongoose from "mongoose";
 import { sendBookingConfirmation } from "../utils/sendMail.js";
 
-const allowedServices = ["knip", "fade", "baard"];
-
 const serviceData = {
   knip: {
     Price: 25,
@@ -51,8 +49,7 @@ export const getServiceById = async (req, res) => {
   }
 };
 export const createService = async (req, res) => {
-  const { Name, Date, Time } = req.body;
-
+  const { Name, Date: dateString, Time } = req.body;
 
   const cleanName = Name.trim().toLowerCase();
   
@@ -63,9 +60,26 @@ export const createService = async (req, res) => {
   const { Price, Description } = serviceData[cleanName];
 
   try {
+    const selectedDate = new Date(dateString);
+    const nextDate = new Date(selectedDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    const existingBooking = await Service.findOne({
+      Date: {
+        $gte: selectedDate,
+        $lt: nextDate
+      },
+      Time,
+      Status: "Gepland"
+    });
+    if (existingBooking) {
+      return res.status(400).json({ error: "Deze datum en tijd zijn al gereserveerd"});
+    }
+
+
     const service = await Service.create({
       Name: cleanName,
-      Date,
+      Date: dateString,
       Time,
       Price,
       Description,
@@ -81,7 +95,7 @@ export const createService = async (req, res) => {
           user.email,
           user.username,
           Name,
-          Date,
+          dateString,
           Time,
           Price
         );
@@ -93,7 +107,8 @@ export const createService = async (req, res) => {
 
     res.status(201).json(service);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error creating service:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -140,3 +155,33 @@ export const deleteService = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getAvailableTimeSlots = async (req, res) => {
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({ error: "Date parameter is verplicht"})
+  }
+
+  try {
+    const allSlots = [
+      "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"
+    ];
+
+    const bookedServices = await Service.find({ Date: {
+      $gte: new Date(date),
+       $lt: new Date(new Date(date).getTime() + 24 *60 *60 * 1000)
+      },
+      Status: "Gepland"
+    }).select("Time");
+
+
+    const bookedSlots = bookedServices.map(services => services.Time);
+
+    const availableSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
+
+    res.status(200).json({ availableTimeSlots: availableSlots, date });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
