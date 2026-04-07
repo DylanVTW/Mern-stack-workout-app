@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -7,6 +8,7 @@ function Login() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +28,7 @@ function Login() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "inculde",
         body: JSON.stringify({ email, password }),
       });
 
@@ -38,9 +41,10 @@ function Login() {
       }
 
       // Save token to localStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("email", data.email);
-      localStorage.setItem("role", data.role);
+      login(data.accessToken, {
+      email: data.email,
+      role: data.role,
+      });
 
       // Redirect to services page
       navigate("/services");

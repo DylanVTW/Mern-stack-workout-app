@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { apiCall } from "../utils/apiCall";
 
-function ServiceForm({ token, onServiceCreated }) {
+function ServiceForm({ onServiceCreated }) {
   // Form state for service type, date, and time
   const [Name, setName] = useState("knip");
   const [Date, setDate] = useState("");
@@ -8,6 +10,7 @@ function ServiceForm({ token, onServiceCreated }) {
   const [error, setError] = useState(null);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { accessToken, refreshToken } = useAuth();
 
   useEffect(() => {
     if (!Date) {
@@ -18,13 +21,14 @@ function ServiceForm({ token, onServiceCreated }) {
     const fetchAvailableTimeSlots = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
+        const response = await apiCall(
           `http://localhost:5000/api/service/available-time-slots?date=${Date}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${accessToken}`,
             },
-          }
+          },
+          { refreshToken }
         );
         if (!response.ok) {
           throw new Error("Fout bij ophalen beschikbare tijdslots");
@@ -43,7 +47,7 @@ function ServiceForm({ token, onServiceCreated }) {
     };
 
     fetchAvailableTimeSlots();
-  }, [Date, token, Time]);
+  }, [Date, accessToken, Time, refreshToken]);
 
   // Submit handler calls backend API and resets fields on success
   const handleSubmit = async (e) => {
@@ -61,14 +65,16 @@ function ServiceForm({ token, onServiceCreated }) {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/service", {
+      const response = await apiCall("http://localhost:5000/api/service", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(service),
-      });
+      },
+      { refreshToken }
+    );
 
       const data = await response.json();
 
@@ -86,13 +92,14 @@ function ServiceForm({ token, onServiceCreated }) {
         } else if (response.status === 409) {
           setError("Deze datum en tijd zijn al gereserveerd");
 
-          const availableResponse = await fetch(
+          const availableResponse = await apiCall(
             `http://localhost:5000/api/service/available-time-slots?date=${Date}`,
             {
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${accessToken}`,
               },
-            }
+            },
+            { refreshToken }
           );
           if (availableResponse.ok) {
             const availableData = await availableResponse.json();

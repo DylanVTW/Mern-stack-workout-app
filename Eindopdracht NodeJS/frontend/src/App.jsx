@@ -6,9 +6,12 @@ import MyServices from "./components/MyServices";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminDashboard from "./components/AdminDashboard";
 import AdminRoute from "./components/AdminRoute";
+import UserProfile from "./components/UserProfile";
+import { AuthProvider } from "../context/AuthContext";
 
 function App() {
   return (
+    <AuthProvider>
     <Router>
       <Routes>
         {/* Public routes */}
@@ -35,6 +38,15 @@ function App() {
         />
 
         <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <UserProfile />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
          path="/admin"
          element={
             <AdminRoute>
@@ -47,6 +59,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
+    </AuthProvider>
   );
 }
 

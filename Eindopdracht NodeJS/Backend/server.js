@@ -4,6 +4,7 @@ import cors from "cors";
 import serviceRoutes from "./src/routes/serviceRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import adminRoutes from  "./src/routes/adminRoutes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,10 +12,12 @@ const PORT = process.env.PORT || 5000;
 app.use(
   cors({
     origin: "http://localhost:5173",
+    credentials: true,
   }),
 );
 
 app.use(express.json());
+app.use(cookieParrser());
 
 app.use("/api/service", serviceRoutes);
 app.use("/api/auth", authRoutes);

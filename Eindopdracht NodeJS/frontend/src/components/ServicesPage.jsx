@@ -1,8 +1,16 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { apiCall } from "../utils/apiCall";
 
 function ServicesPage() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const logout = useAuth();
+  const [services, setServices] = useState([]); 
+
+
+  const handleServiceCreated = () => {
+
+  };
 
   // 🔹 Available services
   const availableServices = [
@@ -32,8 +40,8 @@ function ServicesPage() {
   };
 
   // Logout and redirect to login
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
 
@@ -56,6 +64,10 @@ function ServicesPage() {
       </div>
     </div>
   );
+
+  
 }
+
+
 
 export default ServicesPage;

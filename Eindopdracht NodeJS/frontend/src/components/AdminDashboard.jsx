@@ -1,29 +1,32 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../context/AuthContext";
+import { apiCall } from "../utils/apiCall"; 
 
 function AdminDashboard() {
     const [services, setServices] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [error, setError ] = useState(null);
     const navigate = useNavigate();
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
+    const { accessToken, refreshToken, logout, user } = useAuth();
 
     useEffect(() => {
-        if (role !== 'admin') {
+        if (user && user.role !== 'admin') {
             navigate('/services');
         }
 
-    }, [role, navigate]);
+    }, [user, navigate]);
 
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/admin/services", {
+                const response = await apiCall("http://localhost:5000/api/admin/services", {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${accessToken}`,
                     },
-                });
+                },
+                { refreshToken }            
+            );
 
                 if (response.status === 401) {
                     setError("Je hebt geen adminrechten om deze pagina te bekijken.");
@@ -43,15 +46,13 @@ function AdminDashboard() {
                 setLoading(false);
             }
         };
-        if (token && role === 'admin') {
+        if (accessToken && user?.role === 'admin') {
             fetchServices();
         }
-    }, [token, role, navigate]);
+    }, [accessToken, user, navigate, refreshToken]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('email');
-        localStorage.removeItem('role');
+    const handleLogout = async () => {
+        await logout();
         navigate('/login');
     };
 

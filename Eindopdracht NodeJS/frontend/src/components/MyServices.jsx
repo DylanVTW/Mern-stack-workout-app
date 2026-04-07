@@ -1,23 +1,27 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ServiceForm from "./ServiceForm";
+import { useAuth } from "../context/AuthContext";
+import { apiCall } from "../utils/apiCall";
 
 function MyServices() {
   const [services, setServices] = useState([]);
   const [showForm, setShowForm] = useState(false);
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const { accessToken, refreshToken, logout } = useAuth();
 
   // 🔹 Fetch all services (ONLY YOURS)
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/service", {
+        const res = await apiCall("http://localhost:5000/api/service", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
-        });
+        },
+        { refreshToken }
+      );
 
         const data = await res.json();
         setServices(Array.isArray(data) ? data : []);
@@ -26,21 +30,23 @@ function MyServices() {
       }
     };
 
-    if (token) fetchServices();
-  }, [token]);
+    if (accessToken) fetchServices();
+  }, [accessToken, refreshToken]);
 
 
   // 🔹 Cancel service
   const handleCancel = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/service/${id}`, {
+      const res = await apiCall(`http://localhost:5000/api/service/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ Status: "Geannuleerd" }),
-      });
+      },
+      { refreshToken }
+    );
 
       const data = await res.json();
 
@@ -57,12 +63,14 @@ function MyServices() {
   // 🔹 Delete Service (optional)
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/service/${id}`, {
+      await apiCall(`http://localhost:5000/api/service/${id}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
-      });
+      },
+      { refreshToken }
+    );
 
       setServices((prev) => prev.filter((s) => s._id !== id));
     } catch (err) {
@@ -84,8 +92,8 @@ function MyServices() {
   };
 
   // Logout and clear token
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
 
@@ -100,7 +108,6 @@ function MyServices() {
 
       {showForm && (
         <ServiceForm
-          token={token}
           onServiceCreated={(newService) => {
             setServices((prev) => [...prev, newService]);
             setShowForm(false); // closes form after submit

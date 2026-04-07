@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; 
 
 function Register() {
     const [username, setUsername] = useState("");
@@ -9,6 +10,7 @@ function Register() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +36,7 @@ function Register() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({username, email, password }),
       });
 
@@ -46,10 +49,11 @@ function Register() {
       }
 
       // Save token to localStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("email", data.email);
-      localStorage.setItem("role", data.role);
-
+      login(data.accessToken, {
+      email: data.email,
+      role: data.role,
+      });
+      
       // Redirect to services page
       navigate("/services");
     } catch (error) {
