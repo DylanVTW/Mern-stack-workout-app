@@ -1,6 +1,6 @@
 import multer from "multer";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
-import cloudinary from "../confi/cloudinaryConfig.js";
+import  CloudinaryStorage from "multer-storage-cloudinary";
+import cloudinary from "../config/cloudinaryConfig.js";
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
@@ -17,7 +17,7 @@ export const uploadProfileImage = multer({
         fileSize: 2 * 1024* 1024,
     },
     fileFilter: (req, file, cb) => {
-        const allowedTypes = ["image/jpg","image/jpeg", "image/png", "image/webp", "image/gif"];
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {

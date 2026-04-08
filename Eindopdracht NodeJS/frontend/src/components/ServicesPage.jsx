@@ -1,10 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { apiCall } from "../utils/apiCall";
 
 function ServicesPage() {
   const navigate = useNavigate();
-  const logout = useAuth();
+  const { logout, user } = useAuth();
   const [services, setServices] = useState([]); 
 
 
@@ -47,10 +48,47 @@ function ServicesPage() {
 
   return (
     <div className="App">
-      <h1>Beschikbare Diensten</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", padding: "10px 20px", borderBottom: "1px solid #ddd" }}>
+        <h1>Beschikbare Diensten</h1>
+        
+        {/* Profile Circle */}
+        <div
+          onClick={() => navigate("/profile")}
+          style={{
+            width: "50px",
+            height: "50px",
+            borderRadius: "50%",
+            backgroundColor: user?.profileImage ? "transparent" : "#007bff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            border: "2px solid #007bff",
+            overflow: "hidden",
+          }}
+        >
+          {user?.profileImage ? (
+            <img
+              src={user.profileImage}
+              alt="Profile"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <span style={{ color: "white", fontWeight: "bold", fontSize: "20px" }}>
+              {user?.username ? user.username[0].toUpperCase() : "U"}
+            </span>
+          )}
+        </div>
+      </div>
 
-      <button onClick={handleLogout}>Logout</button>
-      <button onClick={handleViewMyServices}>Mijn Afspraken</button>
+      <div style={{ padding: "0 20px" }}>
+        <Link to="/profile">
+          <button>Upload Profielfoto</button>
+        </Link>
+
+        <button onClick={handleLogout}>Logout</button>
+        <button onClick={handleViewMyServices}>Mijn Afspraken</button>
+      </div>
 
       {/* 🔹 LIST OF AVAILABLE SERVICES */}
       <div className="services-list">

@@ -30,7 +30,7 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     
-    res.status(201).json({username: user.username, email: user.email, token: accessToken, role: user.role });
+    res.status(201).json({username: user.username, email: user.email, accessToken, token: accessToken, role: user.role });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -62,7 +62,7 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     
-    res.status(201).json({username: user.username, email: user.email, token: accessToken, role: user.role });
+    res.status(201).json({username: user.username, email: user.email, accessToken, token: accessToken, role: user.role });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -106,10 +106,20 @@ export const logout = async (req, res) => {
 export const uploadProfileImage = async (req, res) => {
   try {
     if (!req.file) {
+      console.error("No file received in request");
       return res.status(400).json({ error: "No file uploaded" });
     }
-    const userId = req.user.id;
-    const profileImageUrl = req.file.path;
+    const userId = req.user._id || req.user.id;
+    
+    console.log("File object received:", req.file);
+    
+    const profileImageUrl = req.file.secure_url || req.file.path || req.file.url;
+    console.log("Uploading profile image for user:", userId, "File URL:", profileImageUrl);
+
+    if (!profileImageUrl) {
+      console.error("No URL found in file object");
+      return res.status(400).json({ error: "Failed to get image URL" });
+    }
 
     const user = await User.findByIdAndUpdate(
       userId, 
@@ -117,10 +127,15 @@ export const uploadProfileImage = async (req, res) => {
       { new: true }
     ).select("-password");
 
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
     res.status(200).json({ message: "Profile image updated", user, profileImage: profileImageUrl });
 
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Upload error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 

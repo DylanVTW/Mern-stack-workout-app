@@ -81,7 +81,7 @@ export function AuthProvider({ children }) {
     }, []);
 
 
-    const updateUser = useCallBack((updatedUserData) => {
+    const updateUser = useCallback((updatedUserData) => {
         setUser(prevUser => ({
             ...prevUser,
             ...updatedUserData

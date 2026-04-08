@@ -28,7 +28,7 @@ function Login() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "inculde",
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -40,10 +40,12 @@ function Login() {
         return;
       }
 
+      const accessToken = data.accessToken || data.token;
+
       // Save token to localStorage
-      login(data.accessToken, {
-      email: data.email,
-      role: data.role,
+      login(accessToken, {
+        email: data.email,
+        role: data.role,
       });
 
       // Redirect to services page

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 
-function ProfileImageUpload() {
+function ProfileImageUpload({ onUploadSuccess }) {
     const [selectedFile, setSelectedFile]  = useState(null);
     const [preview, setPreview] = useState(null);
     const [uploading, setUploading] = useState(false);
@@ -15,7 +15,7 @@ function ProfileImageUpload() {
 
         if (!file) return;
 
-        const allowedTypes = ["image.jpg", "image/jpeg", "image/png", "image/webp", "image/gif"];
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
         if (!allowedTypes.includes(file.type)) {
             setError("Ongeldig bestandstype. Alleen JPG, JPEG, PNG, WEBP en GIF zijn toegestaan.");
             return;
@@ -34,12 +34,15 @@ function ProfileImageUpload() {
         reader.onloadend = () => {
             setPreview(reader.result);
         };
-        reader.readerAsDataUrl(file);
+        reader.readAsDataURL(file);
 };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Form submitted, selectedFile:", selectedFile);
+        
         if (!selectedFile) {
+            console.log("No file selected");
             setError("Selecteer een afbeelding om te uploaden.");
             return;
         }
@@ -48,9 +51,11 @@ function ProfileImageUpload() {
         setSuccess(false);
 
         try {
-            const formData = new formData();
+            console.log("Starting upload with accessToken:", accessToken);
+            const formData = new FormData();
             formData.append("profileImage", selectedFile);
 
+            console.log("FormData created, sending to backend...");
             const response = await fetch("http://localhost:5000/api/auth/profile/image", {
                 method: "POST",
                 headers: {
@@ -59,7 +64,10 @@ function ProfileImageUpload() {
                 credentials: "include",
                 body: formData,
             });
+            
+            console.log("Response received:", response.status);
             const data = await response.json();
+            console.log("Response data:", data);
 
             if (!response.ok) {
                 setError(data.error || "Fout bij uploaden afbeelding.");
@@ -71,14 +79,23 @@ function ProfileImageUpload() {
             setSelectedFile(null);
             setPreview(null);
 
+            const imageUrl = data.profileImage || (data.user && data.user.profileImage);
+            console.log("Image URL to save:", imageUrl);
+            
             const user = JSON.parse(sessionStorage.getItem("user") || "{}");
-            user.profileImage = data.profileImage;
+            user.profileImage = imageUrl;
             sessionStorage.setItem("user", JSON.stringify(user));
 
             setTimeout(() => {
                 setSuccess(false);
             }, 3000);
+
+            if (onUploadSuccess) {
+                console.log("Calling onUploadSuccess callback");
+                onUploadSuccess();
+            }
         } catch (error) {
+            console.error("Upload error:", error);
             setError("Server error: " + error.message);
             setUploading(false);
         }
