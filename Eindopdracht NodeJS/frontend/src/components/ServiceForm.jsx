@@ -115,34 +115,71 @@ function ServiceForm({ onServiceCreated }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h3>Nieuwe afspraak</h3>
+    <form onSubmit={handleSubmit} style={{ padding: "15px", border: "1px solid #ddd", borderRadius: "4px", margin: "15px auto", maxWidth: "400px", width: "100%" }}>
+      <h3 style={{ margin: "0 0 10px 0" }}>Nieuwe afspraak</h3>
 
       {/* SERVICE SELECT */}
-      <select value={Name} onChange={(e) => setName(e.target.value)}>
-        <option value="knip">Knip (€25)</option>
-        <option value="fade">Fade (€30)</option>
-        <option value="baard">Baard (€15)</option>
-      </select>
+      <div style={{ marginBottom: "10px" }}>
+        <label htmlFor="service-select" style={{ display: "block", marginBottom: "3px", fontSize: "14px" }}>Dienst:</label>
+        <select
+          id="service-select"
+          value={Name}
+          onChange={(e) => setName(e.target.value)}
+          style={{
+            padding: "6px 8px",
+            border: "1px solid #ddd",
+            borderRadius: "4px",
+            width: "100%",
+            boxSizing: "border-box",
+            cursor: "pointer",
+            fontSize: "14px",
+          }}
+        >
+          <option value="knip">Knip (€25)</option>
+          <option value="fade">Fade (€30)</option>
+          <option value="baard">Baard (€15)</option>
+        </select>
+      </div>
 
       {/* DATE */}
-      <input
-        type="date"
-        value={Date}
-        onChange={(e) => setDate(e.target.value)}
-      />
+      <div style={{ marginBottom: "10px" }}>
+        <label htmlFor="date-input" style={{ display: "block", marginBottom: "3px", fontSize: "14px" }}>Datum:</label>
+        <input
+          id="date-input"
+          type="date"
+          value={Date}
+          onChange={(e) => setDate(e.target.value)}
+          style={{
+            padding: "6px 8px",
+            border: "1px solid #ddd",
+            borderRadius: "4px",
+            width: "100%",
+            boxSizing: "border-box",
+            cursor: "pointer",
+            fontSize: "14px",
+          }}
+        />
+      </div>
 
       {/* TIME SLOT SELECT */}
       {Date && (
-        <div>
-          <label htmlFor="time-select">Selecteer een tijdslot:</label>
+        <div style={{ marginBottom: "10px" }}>
+          <label htmlFor="time-select" style={{ display: "block", marginBottom: "3px" , fontSize: "14px" }}>Selecteer een tijdslot:</label>
           {loading ? (
-            <p>Laden...</p>
+            <p style={{ fontSize: "14px", margin: "5px 0" }}>Laden...</p>
           ) : availableTimeSlots.length > 0 ? (
             <select
               id="time-select"
               value={Time}
               onChange={(e) => setTime(e.target.value)}
+              style={{
+                padding: "6px 8px",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                width: "100%",
+                cursor: "pointer",
+                fontSize: "14px",
+              }}
             >
               <option value="">-- Kies een tijd --</option>
               {availableTimeSlots.map((slot) => (
@@ -152,17 +189,29 @@ function ServiceForm({ onServiceCreated }) {
               ))}
             </select>
           ) : (
-            <p style={{ color: "red" }}>Geen beschikbare tijdsloten voor deze dag</p>
+            <p style={{ color: "red", fontSize: "14px", margin: "5px 0" }}>Geen beschikbare tijdsloten voor deze dag</p>
           )}
         </div>
       )}
       
 
       {/* ERROR */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>{error}</p>}
 
       {/* BUTTON */}
-      <button type="submit" disabled= {!Date || !Time || loading }>
+      <button
+        type="submit"
+        disabled={!Date || !Time || loading}
+        style={{
+          padding: "6px 10px",
+          backgroundColor: !Date || !Time || loading ? "#ccc" : "#007bff",
+          color: "white",
+          border: "none",
+          borderRadius: "4px",
+          cursor: !Date || !Time || loading ? "not-allowed" : "pointer",
+          fontSize: "14px",
+        }}
+      >
         Maak afspraak
       </button>
     </form>

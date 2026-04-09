@@ -1,17 +1,11 @@
-import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { apiCall } from "../utils/apiCall";
+import ProfileAvatar from "./ProfileAvatar";
 
 function ServicesPage() {
   const navigate = useNavigate();
   const { logout, user } = useAuth();
-  const [services, setServices] = useState([]); 
 
-
-  const handleServiceCreated = () => {
-
-  };
 
   // 🔹 Available services
   const availableServices = [
@@ -48,46 +42,76 @@ function ServicesPage() {
 
   return (
     <div className="App">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", padding: "10px 20px", borderBottom: "1px solid #ddd" }}>
-        <h1>Beschikbare Diensten</h1>
-        
-        {/* Profile Circle */}
-        <div
-          onClick={() => navigate("/profile")}
-          style={{
-            width: "50px",
-            height: "50px",
-            borderRadius: "50%",
-            backgroundColor: user?.profileImage ? "transparent" : "#007bff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            border: "2px solid #007bff",
-            overflow: "hidden",
-          }}
-        >
-          {user?.profileImage ? (
-            <img
-              src={user.profileImage}
-              alt="Profile"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          ) : (
-            <span style={{ color: "white", fontWeight: "bold", fontSize: "20px" }}>
-              {user?.username ? user.username[0].toUpperCase() : "U"}
-            </span>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "20px",
+          padding: "10px 20px",
+          borderBottom: "1px solid #ddd",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <h1>Beschikbare Diensten</h1>
+          {user?.role === "admin" && (
+            <button
+              onClick={() => navigate("/admin")}
+              style={{
+                padding: "8px 12px",
+                backgroundColor: "#007bff",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Admin Pagina
+            </button>
           )}
         </div>
-      </div>
-
-      <div style={{ padding: "0 20px" }}>
+        <ProfileAvatar />
         <Link to="/profile">
-          <button>Upload Profielfoto</button>
+          <button
+            style={{
+              padding: "8px 12px",
+              backgroundColor: "#008080",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Upload Profielfoto
+          </button>
         </Link>
 
-        <button onClick={handleLogout}>Logout</button>
-        <button onClick={handleViewMyServices}>Mijn Afspraken</button>
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: "8px 12px",
+            backgroundColor: "#dc3545",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Logout
+        </button>
+        <button
+          onClick={handleViewMyServices}
+          style={{
+            padding: "8px 12px",
+            backgroundColor: "#6c757d",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Mijn Afspraken
+        </button>
       </div>
 
       {/* 🔹 LIST OF AVAILABLE SERVICES */}
@@ -95,17 +119,17 @@ function ServicesPage() {
         {availableServices.map((service) => (
           <div key={service.id} className="service-card">
             <h3>{service.name}</h3>
-            <p><strong>Beschrijving:</strong> {service.description}</p>
-            <p><strong>Prijs:</strong> €{service.price}</p>
+            <p>
+              <strong>Beschrijving:</strong> {service.description}
+            </p>
+            <p>
+              <strong>Prijs:</strong> €{service.price}
+            </p>
           </div>
         ))}
       </div>
     </div>
   );
-
-  
 }
-
-
 
 export default ServicesPage;

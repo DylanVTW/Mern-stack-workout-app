@@ -42,10 +42,12 @@ function Login() {
 
       const accessToken = data.accessToken || data.token;
 
-      // Save token to localStorage
+      // Save token and user info to auth state
       login(accessToken, {
+        username: data.username,
         email: data.email,
         role: data.role,
+        profileImage: data.profileImage || null,
       });
 
       // Redirect to services page

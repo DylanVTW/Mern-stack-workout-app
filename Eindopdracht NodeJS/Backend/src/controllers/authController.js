@@ -62,7 +62,14 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     
-    res.status(201).json({username: user.username, email: user.email, accessToken, token: accessToken, role: user.role });
+    res.status(201).json({
+      username: user.username,
+      email: user.email,
+      profileImage: user.profileImage,
+      accessToken,
+      token: accessToken,
+      role: user.role,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

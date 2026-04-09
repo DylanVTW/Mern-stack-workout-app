@@ -43,15 +43,21 @@ function Register() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || "Registratie mislukt");
+        const backendErrors = data.errors
+          ? Object.values(data.errors).join(" ")
+          : data.message;
+
+        setError(backendErrors || "Registratie mislukt");
         setLoading(false);
         return;
       }
 
-      // Save token to localStorage
+      // Save token and user data
       login(data.accessToken, {
-      email: data.email,
-      role: data.role,
+        username: data.username,
+        email: data.email,
+        role: data.role,
+        profileImage: data.profileImage || null,
       });
       
       // Redirect to services page

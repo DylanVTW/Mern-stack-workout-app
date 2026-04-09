@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext";
 import { apiCall } from "../utils/apiCall"; 
+import ProfileAvatar from "./ProfileAvatar";
 
 function AdminDashboard() {
     const [services, setServices] = useState([]);
@@ -68,19 +69,35 @@ function AdminDashboard() {
        <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <h1>Admin Dashboard</h1>
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#dc3545",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          Uitloggen
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <ProfileAvatar />
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "#dc3545",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Logout
+          </button>
+          <button
+            onClick={() => navigate("/services")}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "#6c757d",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Terug naar Home
+          </button>
+        </div>
       </div>
 
       {services.length === 0 ? (

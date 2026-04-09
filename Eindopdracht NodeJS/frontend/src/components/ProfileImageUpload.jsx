@@ -8,7 +8,7 @@ function ProfileImageUpload({ onUploadSuccess }) {
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
-    const { accessToken } = useAuth();
+    const { accessToken, updateUser } = useAuth();
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -82,9 +82,15 @@ function ProfileImageUpload({ onUploadSuccess }) {
             const imageUrl = data.profileImage || (data.user && data.user.profileImage);
             console.log("Image URL to save:", imageUrl);
             
-            const user = JSON.parse(sessionStorage.getItem("user") || "{}");
-            user.profileImage = imageUrl;
-            sessionStorage.setItem("user", JSON.stringify(user));
+            if (imageUrl) {
+              const currentUser = JSON.parse(sessionStorage.getItem("user") || "{}");
+              const updatedUser = {
+                ...currentUser,
+                profileImage: imageUrl,
+              };
+              sessionStorage.setItem("user", JSON.stringify(updatedUser));
+              updateUser({ profileImage: imageUrl });
+            }
 
             setTimeout(() => {
                 setSuccess(false);
