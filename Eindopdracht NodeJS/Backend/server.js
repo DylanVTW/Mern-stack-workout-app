@@ -36,15 +36,20 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: err.message || "Internal server error" });
 });
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("Connected to MongoDB");
+// Only connect to MongoDB and start server if not in test environment
+if (process.env.NODE_ENV !== "test") {
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log("Connected to MongoDB");
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port http://localhost:${PORT}`);
+      app.listen(PORT, () => {
+        console.log(`Server running on port http://localhost:${PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.error("Error connecting to MongoDB:", error.message);
     });
-  })
-  .catch((error) => {
-    console.error("Error connecting to MongoDB:", error.message);
-  });
+}
+
+export default app;

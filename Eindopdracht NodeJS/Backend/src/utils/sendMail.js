@@ -18,6 +18,9 @@ export const sendBookingConfirmation = async (
   servicePrice
 ) => {
   try {
+    if (process.env.NODE_ENV === "test") {
+      return true;
+    }
     // Formatteer de datum naar Nederlands formaat
     const date = new Date(serviceDate);
     const formattedDate = date.toLocaleDateString("nl-NL", {
