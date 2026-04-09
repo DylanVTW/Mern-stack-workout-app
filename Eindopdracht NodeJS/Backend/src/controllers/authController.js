@@ -2,11 +2,13 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
 const createAccessToken = (id, role) => {
-  return jwt.sign({ id, role}, process.env.JWT_SECRET, { expiresIn: "15m" });
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: "15m" });
 };
 
 const createRefreshToken = (id, role) => {
-  return jwt.sign({ id, role }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
+  return jwt.sign({ id, role }, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: "7d",
+  });
 };
 
 export const register = async (req, res) => {
@@ -15,7 +17,9 @@ export const register = async (req, res) => {
   try {
     const exists = await User.findOne({ email });
     if (exists) {
-      return res.status(400).json({ errors: { email: "Email already in use" } });
+      return res
+        .status(400)
+        .json({ errors: { email: "Email already in use" } });
     }
 
     const user = await User.create({ username, email, password, role });
@@ -29,8 +33,14 @@ export const register = async (req, res) => {
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    
-    res.status(201).json({username: user.username, email: user.email, accessToken, token: accessToken, role: user.role });
+
+    res.status(201).json({
+      username: user.username,
+      email: user.email,
+      accessToken,
+      token: accessToken,
+      role: user.role,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -50,7 +60,9 @@ export const login = async (req, res) => {
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json({ errors: { password: "Incorrect password" } });
+      return res
+        .status(400)
+        .json({ errors: { password: "Incorrect password" } });
     }
     const accessToken = createAccessToken(user._id, user.role);
     const refreshToken = createRefreshToken(user._id, user.role);
@@ -61,7 +73,7 @@ export const login = async (req, res) => {
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    
+
     res.status(201).json({
       username: user.username,
       email: user.email,
@@ -77,37 +89,37 @@ export const login = async (req, res) => {
 
 export const refresh = async (req, res) => {
   try {
-  const refreshToken = req.cookies.refreshToken;
+    const refreshToken = req.cookies.refreshToken;
 
-  if (!refreshToken) {
-    return res.status(401).json({ error: "Geen geldige refresh token" });
+    if (!refreshToken) {
+      return res.status(401).json({ error: "Geen geldige refresh token" });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.id).select("_id role");
+
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    const newAccessToken = createAccessToken(user._id, user.role);
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    return res.status(401).json({ error: "Ongeldige refresh token" });
   }
-
-  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-  const user = await User.findById(decoded.id).select("_id role");
-
-  if (!user) {
-    return res.status(401).json({ error: "User not found" });
-  }
-
-  const newAccessToken = createAccessToken(user._id, user.role);
-  res.status(200).json({ accessToken: newAccessToken });  
- } catch (error) {
-  return res.status(401).json({ error: "Ongeldige refresh token" });
- }
 };
 
 export const logout = async (req, res) => {
   try {
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  });
-  res.status(200).json({ message: "Succesvol uitgelogd" });
-} catch (error) {
-  res.status(500).json({ message: "Server error" });
-} 
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    res.status(200).json({ message: "Succesvol uitgelogd" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 export const uploadProfileImage = async (req, res) => {
@@ -117,11 +129,17 @@ export const uploadProfileImage = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
     const userId = req.user._id || req.user.id;
-    
+
     console.log("File object received:", req.file);
-    
-    const profileImageUrl = req.file.secure_url || req.file.path || req.file.url;
-    console.log("Uploading profile image for user:", userId, "File URL:", profileImageUrl);
+
+    const profileImageUrl =
+      req.file.secure_url || req.file.path || req.file.url;
+    console.log(
+      "Uploading profile image for user:",
+      userId,
+      "File URL:",
+      profileImageUrl,
+    );
 
     if (!profileImageUrl) {
       console.error("No URL found in file object");
@@ -129,17 +147,20 @@ export const uploadProfileImage = async (req, res) => {
     }
 
     const user = await User.findByIdAndUpdate(
-      userId, 
+      userId,
       { profileImage: profileImageUrl },
-      { new: true }
+      { new: true },
     ).select("-password");
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({ message: "Profile image updated", user, profileImage: profileImageUrl });
-
+    res.status(200).json({
+      message: "Profile image updated",
+      user,
+      profileImage: profileImageUrl,
+    });
   } catch (error) {
     console.error("Upload error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -158,4 +179,4 @@ export const getProfile = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
-}
+};

@@ -115,8 +115,8 @@ function MyServices() {
           borderBottom: "1px solid #ddd",
         }}
       >
-        <div style={{display: "flex", alignItems: "center", gap: "10px"}}>
-        <h1>Mijn Afspraken</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <h1>Mijn Afspraken</h1>
         </div>
         <ProfileAvatar />
         <Link to="/profile">
@@ -129,20 +129,25 @@ function MyServices() {
               borderRadius: "4px",
               cursor: "pointer",
             }}
-            >Upload Profielfoto
-            </button>
+          >
+            Upload Profielfoto
+          </button>
         </Link>
-      
-        <button onClick={handleBackToServices}
-        style={{
+
+        <button
+          onClick={handleBackToServices}
+          style={{
             padding: "8px 12px",
             backgroundColor: "#6c757d",
             color: "white",
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
-          }}>Terug naar Diensten</button>
-        
+          }}
+        >
+          Terug naar Diensten
+        </button>
+
         <button
           onClick={handleLogout}
           style={{
@@ -156,17 +161,20 @@ function MyServices() {
         >
           Logout
         </button>
-    
-        <button onClick={() => setShowForm(!showForm)}
-          style={{padding: "8px 12px",
+
+        <button
+          onClick={() => setShowForm(!showForm)}
+          style={{
+            padding: "8px 12px",
             backgroundColor: "#228B22",
             color: "white",
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
-          }}>Maak afspraak</button>
-        
-
+          }}
+        >
+          Maak afspraak
+        </button>
       </div>
 
       {showForm && (
@@ -180,7 +188,9 @@ function MyServices() {
 
       {/* 🔹 LIST */}
       {services.length === 0 ? (
-        <p style={{ padding: "20px", textAlign: "center" }}>Geen afspraken gevonden</p>
+        <p style={{ padding: "20px", textAlign: "center" }}>
+          Geen afspraken gevonden
+        </p>
       ) : (
         <div style={{ padding: "0 20px" }}>
           {services.map((service) => (
@@ -190,14 +200,33 @@ function MyServices() {
                 padding: "15px",
               }}
             >
-              <h3 style={{ margin: "0 0 10px 0", color: "#333" }}>{service.Name}</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "15px" }}>
-                <p style={{ margin: "0" }}><strong>Datum:</strong> {formatDate(service.Date)}</p>
-                <p style={{ margin: "0" }}><strong>Tijd:</strong> {service.Time}</p>
-                <p style={{ margin: "0" }}><strong>Status:</strong> {service.Status}</p>
-                <p style={{ margin: "0" }}><strong>Prijs:</strong> €{service.Price}</p>
+              <h3 style={{ margin: "0 0 10px 0", color: "#333" }}>
+                {service.Name}
+              </h3>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "10px",
+                  marginBottom: "15px",
+                }}
+              >
+                <p style={{ margin: "0" }}>
+                  <strong>Datum:</strong> {formatDate(service.Date)}
+                </p>
+                <p style={{ margin: "0" }}>
+                  <strong>Tijd:</strong> {service.Time}
+                </p>
+                <p style={{ margin: "0" }}>
+                  <strong>Status:</strong> {service.Status}
+                </p>
+                <p style={{ margin: "0" }}>
+                  <strong>Prijs:</strong> €{service.Price}
+                </p>
               </div>
-              <p style={{ margin: "0 0 15px 0" }}><strong>Descriptie:</strong> {service.Description}</p>
+              <p style={{ margin: "0 0 15px 0" }}>
+                <strong>Descriptie:</strong> {service.Description}
+              </p>
 
               {/* 🔹 CANCEL BUTTON */}
               {service.Status !== "Geannuleerd" && (

@@ -8,7 +8,7 @@ const serviceSchema = new Schema(
       type: String,
       required: true,
       unique: false,
-      enum: ['knip', 'fade', 'baard'],
+      enum: ["knip", "fade", "baard"],
       maxLength: 50,
     },
     Date: {
@@ -20,17 +20,17 @@ const serviceSchema = new Schema(
       required: true,
     },
     Price: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     Description: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     Status: {
-        type: String,
-        enum: ['Gepland', 'Geannuleerd'],
-        default: 'Gepland',
+      type: String,
+      enum: ["Gepland", "Geannuleerd"],
+      default: "Gepland",
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -41,6 +41,6 @@ const serviceSchema = new Schema(
   { timestamps: true },
 );
 
-const Service = mongoose.model('Service', serviceSchema);
+const Service = mongoose.model("Service", serviceSchema);
 
 export default Service;

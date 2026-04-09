@@ -10,10 +10,10 @@ const userSchema = new mongoose.Schema(
       lowercase: false,
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
     },
     password: {
       type: String,
@@ -22,12 +22,12 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['user', 'admin'],
-      default: 'user'
+      enum: ["user", "admin"],
+      default: "user",
     },
     profileImage: {
       type: String,
-        default: null
+      default: null,
     },
   },
   {

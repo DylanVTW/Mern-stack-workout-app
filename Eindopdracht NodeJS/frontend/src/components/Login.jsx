@@ -110,7 +110,10 @@ function Login() {
 
       <p style={{ marginTop: "15px", textAlign: "center" }}>
         Nog geen account?{" "}
-        <a href="/register" style={{ color: "#007bff", textDecoration: "none" }}>
+        <a
+          href="/register"
+          style={{ color: "#007bff", textDecoration: "none" }}
+        >
           Registreren
         </a>
       </p>

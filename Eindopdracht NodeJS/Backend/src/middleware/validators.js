@@ -44,9 +44,7 @@ export const validateLogin = [
     .withMessage("E-mail is verplicht")
     .isEmail()
     .withMessage("Voer een geldig e-mailadres in"),
-  body("password")
-    .notEmpty()
-    .withMessage("Wachtwoord is verplicht"),
+  body("password").notEmpty().withMessage("Wachtwoord is verplicht"),
 ];
 
 // Service validators
@@ -64,15 +62,13 @@ export const validateCreateService = [
       const selectedDate = new Date(value);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       if (selectedDate < today) {
         throw new Error("Datum mag niet in het verleden liggen");
       }
       return true;
     }),
-  body("Time")
-    .notEmpty()
-    .withMessage("Tijd is verplicht"),
+  body("Time").notEmpty().withMessage("Tijd is verplicht"),
 ];
 
 export const validateUpdateService = [
@@ -88,7 +84,7 @@ export const validateUpdateService = [
         const selectedDate = new Date(value);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
+
         if (selectedDate < today) {
           throw new Error("Datum mag niet in het verleden liggen");
         }
@@ -99,7 +95,5 @@ export const validateUpdateService = [
     .optional()
     .isIn(["Gepland", "Geannuleerd"])
     .withMessage("Status moet Gepland of Geannuleerd zijn"),
-  body("Time")
-    .optional()
-    .trim(),
+  body("Time").optional().trim(),
 ];

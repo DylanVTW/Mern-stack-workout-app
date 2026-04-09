@@ -28,7 +28,7 @@ function ServiceForm({ onServiceCreated }) {
               Authorization: `Bearer ${accessToken}`,
             },
           },
-          { refreshToken }
+          { refreshToken },
         );
         if (!response.ok) {
           throw new Error("Fout bij ophalen beschikbare tijdslots");
@@ -65,16 +65,18 @@ function ServiceForm({ onServiceCreated }) {
     };
 
     try {
-      const response = await apiCall("http://localhost:5000/api/service", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+      const response = await apiCall(
+        "http://localhost:5000/api/service",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(service),
         },
-        body: JSON.stringify(service),
-      },
-      { refreshToken }
-    );
+        { refreshToken },
+      );
 
       const data = await response.json();
 
@@ -99,7 +101,7 @@ function ServiceForm({ onServiceCreated }) {
                 Authorization: `Bearer ${accessToken}`,
               },
             },
-            { refreshToken }
+            { refreshToken },
           );
           if (availableResponse.ok) {
             const availableData = await availableResponse.json();
@@ -115,12 +117,27 @@ function ServiceForm({ onServiceCreated }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ padding: "15px", border: "1px solid #ddd", borderRadius: "4px", margin: "15px auto", maxWidth: "400px", width: "100%" }}>
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        padding: "15px",
+        border: "1px solid #ddd",
+        borderRadius: "4px",
+        margin: "15px auto",
+        maxWidth: "400px",
+        width: "100%",
+      }}
+    >
       <h3 style={{ margin: "0 0 10px 0" }}>Nieuwe afspraak</h3>
 
       {/* SERVICE SELECT */}
       <div style={{ marginBottom: "10px" }}>
-        <label htmlFor="service-select" style={{ display: "block", marginBottom: "3px", fontSize: "14px" }}>Dienst:</label>
+        <label
+          htmlFor="service-select"
+          style={{ display: "block", marginBottom: "3px", fontSize: "14px" }}
+        >
+          Dienst:
+        </label>
         <select
           id="service-select"
           value={Name}
@@ -143,7 +160,12 @@ function ServiceForm({ onServiceCreated }) {
 
       {/* DATE */}
       <div style={{ marginBottom: "10px" }}>
-        <label htmlFor="date-input" style={{ display: "block", marginBottom: "3px", fontSize: "14px" }}>Datum:</label>
+        <label
+          htmlFor="date-input"
+          style={{ display: "block", marginBottom: "3px", fontSize: "14px" }}
+        >
+          Datum:
+        </label>
         <input
           id="date-input"
           type="date"
@@ -164,7 +186,12 @@ function ServiceForm({ onServiceCreated }) {
       {/* TIME SLOT SELECT */}
       {Date && (
         <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="time-select" style={{ display: "block", marginBottom: "3px" , fontSize: "14px" }}>Selecteer een tijdslot:</label>
+          <label
+            htmlFor="time-select"
+            style={{ display: "block", marginBottom: "3px", fontSize: "14px" }}
+          >
+            Selecteer een tijdslot:
+          </label>
           {loading ? (
             <p style={{ fontSize: "14px", margin: "5px 0" }}>Laden...</p>
           ) : availableTimeSlots.length > 0 ? (
@@ -189,14 +216,19 @@ function ServiceForm({ onServiceCreated }) {
               ))}
             </select>
           ) : (
-            <p style={{ color: "red", fontSize: "14px", margin: "5px 0" }}>Geen beschikbare tijdsloten voor deze dag</p>
+            <p style={{ color: "red", fontSize: "14px", margin: "5px 0" }}>
+              Geen beschikbare tijdsloten voor deze dag
+            </p>
           )}
         </div>
       )}
-      
 
       {/* ERROR */}
-      {error && <p style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>{error}</p>}
+      {error && (
+        <p style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>
+          {error}
+        </p>
+      )}
 
       {/* BUTTON */}
       <button

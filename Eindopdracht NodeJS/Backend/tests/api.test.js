@@ -68,11 +68,9 @@ describe("API Endpoints", () => {
   });
 
   test("register with missing fields", async () => {
-    const response = await request(app)
-      .post("/api/auth/register")
-      .send({
-        email: "missing@example.com",
-      });
+    const response = await request(app).post("/api/auth/register").send({
+      email: "missing@example.com",
+    });
 
     expect(response.status).toBe(400);
     expect(response.body.errors.username).toBeDefined();

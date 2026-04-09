@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import serviceRoutes from "./src/routes/serviceRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
-import adminRoutes from  "./src/routes/adminRoutes.js";
+import adminRoutes from "./src/routes/adminRoutes.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -24,7 +24,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
-    res.send("Backend is running");
+  res.send("Backend is running");
 });
 
 // Global error handler to return JSON instead of HTML on server errors

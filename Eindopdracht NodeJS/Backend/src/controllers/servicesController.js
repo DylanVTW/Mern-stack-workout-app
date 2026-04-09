@@ -52,10 +52,10 @@ export const createService = async (req, res) => {
   const { Name, Date: dateString, Time } = req.body;
 
   const cleanName = Name.trim().toLowerCase();
-  
+
   const serviceInfo = serviceData[cleanName];
-  if(!serviceInfo) {
-    return res.status(500).json({error: "Service data not found "});
+  if (!serviceInfo) {
+    return res.status(500).json({ error: "Service data not found " });
   }
   const { Price, Description } = serviceData[cleanName];
 
@@ -67,15 +67,16 @@ export const createService = async (req, res) => {
     const existingBooking = await Service.findOne({
       Date: {
         $gte: selectedDate,
-        $lt: nextDate
+        $lt: nextDate,
       },
       Time,
-      Status: "Gepland"
+      Status: "Gepland",
     });
     if (existingBooking) {
-      return res.status(400).json({ error: "Deze datum en tijd zijn al gereserveerd"});
+      return res
+        .status(400)
+        .json({ error: "Deze datum en tijd zijn al gereserveerd" });
     }
-
 
     const service = await Service.create({
       Name: cleanName,
@@ -83,7 +84,7 @@ export const createService = async (req, res) => {
       Time,
       Price,
       Description,
-      Status: 'Gepland',
+      Status: "Gepland",
       userId: req.user._id,
     });
 
@@ -97,7 +98,7 @@ export const createService = async (req, res) => {
           Name,
           dateString,
           Time,
-          Price
+          Price,
         );
       }
     } catch (emailError) {
@@ -160,28 +161,38 @@ export const getAvailableTimeSlots = async (req, res) => {
   const { date } = req.query;
 
   if (!date) {
-    return res.status(400).json({ error: "Date parameter is verplicht"})
+    return res.status(400).json({ error: "Date parameter is verplicht" });
   }
 
   try {
     const allSlots = [
-      "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
     ];
 
-    const bookedServices = await Service.find({ Date: {
-      $gte: new Date(date),
-       $lt: new Date(new Date(date).getTime() + 24 *60 *60 * 1000)
+    const bookedServices = await Service.find({
+      Date: {
+        $gte: new Date(date),
+        $lt: new Date(new Date(date).getTime() + 24 * 60 * 60 * 1000),
       },
-      Status: "Gepland"
+      Status: "Gepland",
     }).select("Time");
 
+    const bookedSlots = bookedServices.map((services) => services.Time);
 
-    const bookedSlots = bookedServices.map(services => services.Time);
-
-    const availableSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
+    const availableSlots = allSlots.filter(
+      (slot) => !bookedSlots.includes(slot),
+    );
 
     res.status(200).json({ availableTimeSlots: availableSlots, date });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};

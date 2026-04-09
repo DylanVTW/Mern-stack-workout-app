@@ -6,7 +6,6 @@ function ServicesPage() {
   const navigate = useNavigate();
   const { logout, user } = useAuth();
 
-
   // 🔹 Available services
   const availableServices = [
     {

@@ -1,22 +1,23 @@
-import { useAuth } from  "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function ProfileAvatar() {
-    const { user } = useAuth();
-    const navigate = useNavigate();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-    if (!user) {
-        return null;
-    }
+  if (!user) {
+    return null;
+  }
 
-    const profileImage = user.profileImage;
+  const profileImage = user.profileImage;
 
-    const handleProfileClick = () => {
-        navigate("/profile");
-    };
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
 
-    return (
-        <div style={{
+  return (
+    <div
+      style={{
         display: "flex",
         alignItems: "center",
         gap: "10px",
@@ -26,20 +27,25 @@ function ProfileAvatar() {
         transition: "background-color 0.2s",
       }}
       onClick={handleProfileClick}
-      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0f0f0"}
-      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
-      >
-        {profileImage ? (
-            <img src={profileImage}
+      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
+      onMouseLeave={(e) =>
+        (e.currentTarget.style.backgroundColor = "transparent")
+      }
+    >
+      {profileImage ? (
+        <img
+          src={profileImage}
           alt="Profiel"
           style={{
             width: "35px",
             height: "35px",
             borderRadius: "50%",
             objectFit: "cover",
-          }}></img>
-        ): (
-            <div style={{
+          }}
+        ></img>
+      ) : (
+        <div
+          style={{
             width: "35px",
             height: "35px",
             borderRadius: "50%",
@@ -50,13 +56,14 @@ function ProfileAvatar() {
             color: "white",
             fontWeight: "bold",
             fontSize: "16px",
-          }}>
-            {user.username?.charAt(0).toUpperCase() || "U"}
-          </div>
-        )}
-        <span>{user.username}</span>
-      </div>
-    );
+          }}
+        >
+          {user.username?.charAt(0).toUpperCase() || "U"}
+        </div>
+      )}
+      <span>{user.username}</span>
+    </div>
+  );
 }
 
 export default ProfileAvatar;

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; 
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
-    const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -37,7 +37,7 @@ function Register() {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({username, email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await response.json();
@@ -59,7 +59,7 @@ function Register() {
         role: data.role,
         profileImage: data.profileImage || null,
       });
-      
+
       // Redirect to services page
       navigate("/services");
     } catch (error) {
@@ -72,7 +72,6 @@ function Register() {
     <div style={{ maxWidth: "400px", margin: "50px auto", padding: "20px" }}>
       <h2>Registreren</h2>
       <form onSubmit={handleSubmit}>
-
         <div style={{ marginBottom: "15px" }}>
           <label htmlFor="username">Username:</label>
           <input
