@@ -136,6 +136,13 @@ function AdminDashboard() {
                   Service
                 </th>
                 <th
+                style={{padding: "12px",
+                    textAlign: "left",
+                    borderRight: "1px solid #ddd",}}
+                    >
+                      Naam Klant
+                    </th>
+                <th
                   style={{
                     padding: "12px",
                     textAlign: "left",
@@ -192,6 +199,10 @@ function AdminDashboard() {
                     style={{ padding: "12px", borderRight: "1px solid #ddd" }}
                   >
                     {service.Name}
+                  </td>
+                  <td style={{padding: "12px", borderRight: "1px solid #ddd"}}
+                  >
+                    {service.userId?.username || "Onbekend"}
                   </td>
                   <td
                     style={{ padding: "12px", borderRight: "1px solid #ddd" }}
